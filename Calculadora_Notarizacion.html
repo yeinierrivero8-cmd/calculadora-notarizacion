@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Notarización - Garcell</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --accent: #10b981;
+            --dark: #0f172a;
+            --light: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes pop {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 50px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            right: -100%;
+            width: 400px;
+            height: 400px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 50%;
+            animation: float 20s ease infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(50px, 50px); }
+        }
+
+        .icon-main {
+            font-size: 60px;
+            margin-bottom: 20px;
+            display: block;
+            animation: bounce 2s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .header .desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            position: relative;
+        }
+
+        .option input {
+            display: none;
+        }
+
+        .option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 12px;
+            background: var(--light);
+            border: 2px solid transparent;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .option input:checked + label {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .option label:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .option-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .control {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .control-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .spinner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .spinner button {
+            background: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--primary);
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+
+        .spinner button:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .spinner input {
+            flex: 1;
+            text-align: center;
+            border: none;
+            background: transparent;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .spinner input:focus {
+            outline: none;
+        }
+
+        .extras {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .extra-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--light);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .extra-item:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .extra-item input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            margin-right: 12px;
+        }
+
+        .extra-label {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .extra-price {
+            font-weight: 700;
+            color: var(--secondary);
+            font-size: 12px;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 28px;
+            margin: 28px 0;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .summary-row.total {
+            border: none;
+            padding-top: 16px;
+            margin-top: 16px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .summary-label {
+            opacity: 0.9;
+        }
+
+        .warning {
+            background: #fef08a;
+            border-left: 4px solid #eab308;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #713f12;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        button {
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-cta {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px 0 0;
+            border-top: 1px solid #e2e8f0;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .footer-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .lang-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid transparent;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: var(--primary);
+            border-color: white;
+        }
+
+        @media (max-width: 480px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+
+            .control-group {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 40px 20px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .summary-box {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- HEADER -->
+            <div class="header">
+                <div class="lang-switch">
+                    <button type="button" class="lang-btn active" data-lang="es" onclick="setLanguage('es')">🇪🇸 ES</button>
+                    <button type="button" class="lang-btn" data-lang="en" onclick="setLanguage('en')">🇺🇸 EN</button>
+                </div>
+                <span class="icon-main">📋</span>
+                <h1 data-es="Notarización" data-en="Notarization">Notarización</h1>
+                <p class="subtitle" data-es="Garcell Insurance & Taxes" data-en="Garcell Insurance & Taxes">Garcell Insurance & Taxes</p>
+                <p class="desc" data-es="Calcula tu presupuesto en segundos" data-en="Calculate your budget in seconds">Calcula tu presupuesto en segundos</p>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="content">
+                <form id="calc">
+                    <!-- TIPO DE SERVICIO -->
+                    <div class="section">
+                        <div class="section-title" data-es="Servicio" data-en="Service">Servicio</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" id="s1" name="servicio" value="0" checked>
+                                <label for="s1">
+                                    <span class="option-icon">🏢</span>
+                                    <span data-es="En Oficina" data-en="In Office">En Oficina</span>
+                                </label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="s2" name="servicio" value="25">
+                                <label for="s2">
+                                    <span class="option-icon">🚗</span>
+                                    <span data-es="Móvil" data-en="Mobile">Móvil</span>
+                                </label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="s3" name="servicio" value="50">
+                                <label for="s3">
+                                    <span class="option-icon">💻</span>
+                                    <span data-es="Remoto" data-en="Remote">Remoto</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DOCUMENTOS -->
+                    <div class="section">
+                        <div class="section-title" data-es="Documentos" data-en="Documents">Documentos</div>
+                        <div class="control-group">
+                            <div class="control">
+                                <span class="control-label" data-es="Documentos" data-en="Documents">Documentos</span>
+                                <div class="spinner">
+                                    <button type="button" onclick="dec('docs')">−</button>
+                                    <input type="number" id="docs" value="1" min="1" max="50" readonly>
+                                    <button type="button" onclick="inc('docs')">+</button>
+                                </div>
+                            </div>
+                            <div class="control">
+                                <span class="control-label" data-es="Firmas" data-en="Signatures">Firmas</span>
+                                <div class="spinner">
+                                    <button type="button" onclick="dec('firmas')">−</button>
+                                    <input type="number" id="firmas" value="1" min="1" max="10" readonly>
+                                    <button type="button" onclick="inc('firmas')">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- EXTRAS -->
+                    <div class="section">
+                        <div class="section-title" data-es="Servicios Adicionales" data-en="Additional Services">Servicios Adicionales</div>
+                        <div class="extras">
+                            <div class="extra-item">
+                                <input type="checkbox" id="imp" class="extra" value="15">
+                                <label for="imp" class="extra-label" data-es="Impresión de documentos" data-en="Document Printing">Impresión de documentos</label>
+                                <span class="extra-price">+$15</span>
+                            </div>
+                            <div class="extra-item">
+                                <input type="checkbox" id="apos" class="extra" value="25">
+                                <label for="apos" class="extra-label" data-es="Apostilla Haya" data-en="Hague Apostille">Apostilla Haya</label>
+                                <span class="extra-price">+$25</span>
+                            </div>
+                            <div class="extra-item">
+                                <input type="checkbox" id="urge" class="extra" value="35">
+                                <label for="urge" class="extra-label" data-es="Servicio urgente (24hs)" data-en="Urgent Service (24hrs)">Servicio urgente (24hs)</label>
+                                <span class="extra-price">+$35</span>
+                            </div>
+                            <div class="extra-item">
+                                <input type="checkbox" id="trad" class="extra" value="50">
+                                <label for="trad" class="extra-label" data-es="Traducción certificada" data-en="Certified Translation">Traducción certificada</label>
+                                <span class="extra-price">+$50</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RESUMEN -->
+                    <div class="summary-box">
+                        <div class="summary-row">
+                            <span class="summary-label" data-es="Tarifa base" data-en="Base Rate">Tarifa base</span>
+                            <span>$<span id="base">10</span></span>
+                        </div>
+                        <div class="summary-row" id="srv-row" style="display:none;">
+                            <span class="summary-label" data-es="Servicio" data-en="Service">Servicio</span>
+                            <span>+$<span id="srv-amt">0</span></span>
+                        </div>
+                        <div class="summary-row" id="ext-row" style="display:none;">
+                            <span class="summary-label" data-es="Adicionales" data-en="Add-ons">Adicionales</span>
+                            <span>+$<span id="ext-amt">0</span></span>
+                        </div>
+                        <div class="summary-row total">
+                            <span data-es="TOTAL" data-en="TOTAL">TOTAL</span>
+                            <span>$<span id="total">10</span></span>
+                        </div>
+                    </div>
+
+                    <div class="warning">
+                        ⚠️ <span data-es="Presupuesto estimado. El precio final puede variar según la complejidad de los documentos. Contacta para cotización exacta." data-en="Estimated budget. The final price may vary depending on document complexity. Contact us for an exact quote.">Presupuesto estimado. El precio final puede variar según la complejidad de los documentos. Contacta para cotización exacta.</span>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn-cta" onclick="whatsapp()">
+                            💬 <span data-es="Solicitar Cita por WhatsApp" data-en="Request Appointment via WhatsApp">Solicitar Cita por WhatsApp</span>
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="reset()">
+                            🔄 <span data-es="Limpiar" data-en="Clear">Limpiar</span>
+                        </button>
+                    </div>
+
+                    <div class="footer">
+                        📞 <a href="tel:+18327635760" class="footer-link">(832) 763-5760</a>
+                        <br><span data-es="Miami, Florida | Lunes-Viernes 9AM-5PM" data-en="Miami, Florida | Monday-Friday 9AM-5PM">Miami, Florida | Lunes-Viernes 9AM-5PM</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const docs = document.getElementById('docs');
+        const firmas = document.getElementById('firmas');
+        const servicios = document.querySelectorAll('input[name="servicio"]');
+        const extras = document.querySelectorAll('.extra');
+
+        servicios.forEach(s => s.addEventListener('change', calc));
+        extras.forEach(e => e.addEventListener('change', calc));
+
+        function inc(id) {
+            let inp = document.getElementById(id);
+            inp.value = Math.min(50, parseInt(inp.value) + 1);
+            calc();
+        }
+
+        function dec(id) {
+            let inp = document.getElementById(id);
+            inp.value = Math.max(1, parseInt(inp.value) - 1);
+            calc();
+        }
+
+        function calc() {
+            const d = parseInt(docs.value) || 1;
+            const f = parseInt(firmas.value) || 1;
+            const total_firmas = d * f;
+            const base = 10 * total_firmas;
+
+            const srv = parseInt(document.querySelector('input[name="servicio"]:checked').value) || 0;
+            const srv_row = document.getElementById('srv-row');
+            if (srv > 0) {
+                srv_row.style.display = 'flex';
+                document.getElementById('srv-amt').textContent = srv;
+            } else {
+                srv_row.style.display = 'none';
+            }
+
+            let ext_total = 0;
+            extras.forEach(e => {
+                if (e.checked) ext_total += parseInt(e.value) || 0;
+            });
+            const ext_row = document.getElementById('ext-row');
+            if (ext_total > 0) {
+                ext_row.style.display = 'flex';
+                document.getElementById('ext-amt').textContent = ext_total;
+            } else {
+                ext_row.style.display = 'none';
+            }
+
+            const total = base + srv + ext_total;
+            document.getElementById('base').textContent = base;
+            document.getElementById('total').textContent = total;
+        }
+
+        function reset() {
+            document.getElementById('calc').reset();
+            document.getElementById('docs').value = 1;
+            document.getElementById('firmas').value = 1;
+            document.getElementById('s1').checked = true;
+            calc();
+        }
+
+        function whatsapp() {
+            const d = parseInt(docs.value) || 1;
+            const f = parseInt(firmas.value) || 1;
+            const srv = document.querySelector('input[name="servicio"]:checked').nextElementSibling.textContent.trim();
+            const total = document.getElementById('total').textContent;
+            const lang = localStorage.getItem('lang') || 'es';
+
+            let msg;
+            if (lang === 'en') {
+                msg = `Hi, I'm interested in notarization.\n\n📋 Summary:\n- Documents: ${d}\n- Signatures: ${f}\n- Type: ${srv}\n- Total: $${total}\n\nAvailability? 📞`;
+            } else {
+                msg = `Hola, me interesa notarización.\n\n📋 Resumen:\n- Documentos: ${d}\n- Firmas: ${f}\n- Tipo: ${srv}\n- Total: $${total}\n\n¿Disponibilidad? 📞`;
+            }
+
+            window.open(`https://wa.me/18327635760?text=${encodeURIComponent(msg)}`);
+        }
+
+        function setLanguage(lang) {
+            localStorage.setItem('lang', lang);
+
+            // Cambiar textos
+            document.querySelectorAll('[data-es][data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${lang}`);
+            });
+
+            // Actualizar botones de idioma
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+        }
+
+        // Cargar idioma guardado
+        const savedLang = localStorage.getItem('lang') || 'es';
+        setLanguage(savedLang);
+
+        calc();
+    </script>
+</body>
+</html>
